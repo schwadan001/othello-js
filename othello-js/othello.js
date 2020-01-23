@@ -13,7 +13,7 @@ class Othello {
 
     constructor(config = {}) {
         let fen = (config.fen != undefined ? config.fen : this._startingPos);
-        this._board = this.fenToBoard(fen);
+        this._board = this._fenToBoard(fen);
         this.turn = fen.split(' ')[1];
     }
 
@@ -29,7 +29,7 @@ class Othello {
                             var newR = row + rowDelta;
                             var newC = col + colDelta;
                             if (newR >= 0 && newR < this.dim && newC >= 0 && newC < this.dim && !(rowDelta == 0 && colDelta == 0)) {
-                                if (this.isValidMove(turn, row, col, rowDelta, colDelta)) {
+                                if (this._isValidMove(turn, row, col, rowDelta, colDelta)) {
                                     let obj = { 'row': row, 'col': col };
                                     if (!moves.includes(obj)) {
                                         moves.push(obj);
@@ -44,40 +44,10 @@ class Othello {
         return moves;
     }
 
-    isValidMove(turn, row, col, rowDelta, colDelta) {
-        var newR = row + rowDelta;
-        var newC = col + colDelta;
-        var keepChecking = true;
-        var oppCount = 0;
-        while (newR >= 0 && newR < this.dim && newC >= 0 && newC < this.dim && keepChecking) {
-            if (this._board[newR][newC] == this.getOppColor(turn)) {
-                oppCount++;
-            } else if (this._board[newR][newC] == turn && oppCount > 0) {
-                keepChecking = false;
-                return true;
-            } else {
-                keepChecking = false;
-            }
-            newR = newR + rowDelta;
-            newC = newC + colDelta;
-        }
-        return false;
-    }
-
-    _deepCopy(itm) {
-        if (Array.isArray(itm)) {
-            var newArr = [];
-            itm.forEach(subItm => newArr.push(this._deepCopy(subItm)));
-            return newArr;
-        } else {
-            return itm;
-        }
-    }
-
     move(obj) {
         let row = obj.row;
         let col = obj.col;
-        this.setSquare(row, col, this.turn);
+        this._setSquare(row, col, this.turn);
         let idxDeltas = [-1, 0, 1];
         idxDeltas.forEach(rowDelta => {
             idxDeltas.forEach(colDelta => {
@@ -92,7 +62,7 @@ class Othello {
                     } else {
                         keepFlipping = false;
                         if (square == this.turn) {
-                            flipList.forEach(sq => this.setSquare(sq.row, sq.col, this.turn));
+                            flipList.forEach(sq => this._setSquare(sq.row, sq.col, this.turn));
                         }
                     }
                     newR = newR + rowDelta;
@@ -105,18 +75,6 @@ class Othello {
         if (this.getMoves().length == 0) {
             this._switchTurn();
         }
-    }
-
-    setSquare(row, col, val) {
-        this._board[row][col] = val;
-    }
-
-    _switchTurn() {
-        this.turn = (this.turn == 'b') ? 'w' : 'b';
-    }
-
-    getOppColor(turn = this.turn) {
-        return (turn == 'b') ? 'w' : 'b';
     }
 
     gameOver() {
@@ -159,7 +117,49 @@ class Othello {
         return f + ' ' + this.turn;
     }
 
-    fenToBoard(fen) {
+    getOppColor(turn = this.turn) {
+        return (turn == 'b') ? 'w' : 'b';
+    }
+
+    _isValidMove(turn, row, col, rowDelta, colDelta) {
+        var newR = row + rowDelta;
+        var newC = col + colDelta;
+        var keepChecking = true;
+        var oppCount = 0;
+        while (newR >= 0 && newR < this.dim && newC >= 0 && newC < this.dim && keepChecking) {
+            if (this._board[newR][newC] == this.getOppColor(turn)) {
+                oppCount++;
+            } else if (this._board[newR][newC] == turn && oppCount > 0) {
+                keepChecking = false;
+                return true;
+            } else {
+                keepChecking = false;
+            }
+            newR = newR + rowDelta;
+            newC = newC + colDelta;
+        }
+        return false;
+    }
+
+    _deepCopy(itm) {
+        if (Array.isArray(itm)) {
+            var newArr = [];
+            itm.forEach(subItm => newArr.push(this._deepCopy(subItm)));
+            return newArr;
+        } else {
+            return itm;
+        }
+    }
+
+    _setSquare(row, col, val) {
+        this._board[row][col] = val;
+    }
+
+    _switchTurn() {
+        this.turn = (this.turn == 'b') ? 'w' : 'b';
+    }
+
+    _fenToBoard(fen) {
         let f = fen.split(" ")[0];
         var b = [[]];
         var row = 0;
