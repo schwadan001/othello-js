@@ -44,9 +44,9 @@ class Othello {
         return moves;
     }
 
-    move(obj) {
-        let row = obj.row;
-        let col = obj.col;
+    move(position) {
+        let row = position.row;
+        let col = position.col;
         this._setSquare(row, col, this.turn);
         let idxDeltas = [-1, 0, 1];
         idxDeltas.forEach(rowDelta => {
@@ -115,6 +115,12 @@ class Othello {
             }
         }
         return f + ' ' + this.turn;
+    }
+
+    reset() {
+        this._board = this._fenToBoard(this._startingPos);
+        this.turn = this._startingPos.split(' ')[1];
+        this._history = [];
     }
 
     getOppColor(turn = this.turn) {

@@ -15,25 +15,30 @@ class OthelloBoard {
         this.onBlackMove = (config.onBlackMove != undefined ? (config.onBlackMove) : function () { });
         this.onWhiteMove = (config.onWhiteMove != undefined ? (config.onWhiteMove) : function () { });
         this.updateDisplay();
-        this.onBlackMove();
+        if (this.othello.turn == 'b') {
+            this.onBlackMove();
+        } else {
+            this.onWhiteMove();
+        }
+
     }
 
     updateDisplay() {
         let showOptions = (this.displayMoves == this.othello.turn || this.displayMoves == 'both');
-        let boardChanges = this.getChanges().map(sq => this.getId(sq));
+        let boardChanges = this._getChanges().map(sq => this._getId(sq));
         let history = this.othello.getHistory();
         var tableStr = "";
         for (var row = 0; row < this.othello.dim; row++) {
             tableStr += "<tr>";
             for (var col = 0; col < this.othello.dim; col++) {
-                let id = this.getId({ "row": row, "col": col });
+                let id = this._getId({ "row": row, "col": col });
                 var cls = this.othello.getBoard()[row][col];
                 if (showOptions && this.othello.getMoves().map(
-                    o => this.getId(o)).includes(id)) {
+                    o => this._getId(o)).includes(id)) {
                     cls = 'o';
                 }
                 var bg = 'lightgreen';
-                if (history.length > 0 && this.getId(history[history.length - 1]) == id) {
+                if (history.length > 0 && this._getId(history[history.length - 1]) == id) {
                     bg = "#cc99ff";
                 } else if (boardChanges.includes(id)) {
                     bg = 'pink';
@@ -46,8 +51,8 @@ class OthelloBoard {
         $(this.boardId).html(tableStr);
 
         var infoStr = '';
-        let bCount = this.getCount('b');
-        let wCount = this.getCount('w')
+        let bCount = this._getCount('b');
+        let wCount = this._getCount('w')
         if (this.othello.gameOver()) {
             infoStr += 'Game Over - '
             if (bCount > wCount) {
@@ -64,12 +69,8 @@ class OthelloBoard {
         $(this.infoId).html(infoStr);
     }
 
-    getId(obj) {
-        return obj.row + "-" + obj.col;
-    }
-
-    move(obj) {
-        this.othello.move(obj);
+    move(position) {
+        this.othello.move(position);
         this.updateDisplay();
         if (!this.othello.gameOver() && this.othello.turn == 'b' && this.onBlackMove != undefined) {
             this.onBlackMove();
@@ -78,11 +79,13 @@ class OthelloBoard {
         }
     }
 
-    setSquare(row, col, val) {
-        $("#" + this.getId({ "row": row, "col": col })).attr("class", val);
+    reset() {
+        this.othello.reset();
+        this.lastBoard = this.othello.getBoard();
+        this.updateDisplay();
     }
 
-    getChanges() {
+    _getChanges() {
         var changes = [];
         for (var row = 0; row < this.othello.dim; row++) {
             for (var col = 0; col < this.othello.dim; col++) {
@@ -97,7 +100,7 @@ class OthelloBoard {
         return changes;
     }
 
-    getCount(color) {
+    _getCount(color) {
         var counter = 0;
         let b = this.othello.getBoard()
         for (var row = 0; row < this.othello.dim; row++) {
@@ -109,5 +112,12 @@ class OthelloBoard {
         }
         return counter;
     }
-}
 
+    _getId(obj) {
+        return obj.row + "-" + obj.col;
+    }
+
+    _setSquare(row, col, val) {
+        $("#" + this._getId({ "row": row, "col": col })).attr("class", val);
+    }
+}
