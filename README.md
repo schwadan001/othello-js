@@ -1,7 +1,7 @@
 # othello-js
 othello-js is a JavaScript Othello library used for move generation, game logic, and display. All game logic and state are handled by ```othello.js.Othello```, while board display and gameflow are handled by ```othello-board.js.OthelloBoard``` and ```othello.css```
 
-An example implementation of othello-js can be found in the [othello-ui](https://github.com/schwadan001/othello-ui) repository
+An example implementation of othello-js can be found in the [othello-game](https://github.com/schwadan001/othello-game) repository
 
 
 ## Getting started
