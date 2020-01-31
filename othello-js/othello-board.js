@@ -43,7 +43,7 @@ class OthelloBoard {
                 } else if (boardChanges.includes(id)) {
                     bg = 'pink';
                 }
-                tableStr += '<td bgcolor="' + bg + '"><button class="' + cls + '" id="' + id +
+                tableStr += '<td bgcolor="' + bg + '"><button class=" piece ' + cls + '" id="' + id +
                     '" onclick="' + this.boardVar + '.move({row:' + row + ",col:" + col + '})">' + '' + '</button></td>';
             }
             tableStr += "</tr>";

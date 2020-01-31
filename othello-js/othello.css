@@ -8,7 +8,7 @@ td {
     text-align: center;
 }
 
-button {
+button.piece {
     width: 100%;
     height: 100%;
 }
