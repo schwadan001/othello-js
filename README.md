@@ -124,3 +124,12 @@ othello.reset();
 othello.fen(); // returns => '8|8|8|3bw3|3wb3|8|8|8 b'
 othello.getHistory(); // returns => []
 ```
+
+### .getScore(color)
+Returns the number of pieces a player has on the board. Valid arguments are ```'b'``` or ```'w'```.
+
+```javascript
+let othello = new Othello();
+othello.getScore('b'); // returns 2
+othello.getScore('w'); // returns 2
+```

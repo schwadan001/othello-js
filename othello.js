@@ -127,6 +127,18 @@ class Othello {
         return (turn == 'b') ? 'w' : 'b';
     }
 
+    getScore(color) {
+        var counter = 0;
+        for (var row = 0; row < this.dim; row++) {
+            for (var col = 0; col < this.dim; col++) {
+                if (this._board[row][col] == color) {
+                    counter++;
+                }
+            }
+        }
+        return counter;
+    }
+
     _isValidMove(turn, row, col, rowDelta, colDelta) {
         var newR = row + rowDelta;
         var newC = col + colDelta;
