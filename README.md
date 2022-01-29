@@ -11,7 +11,7 @@ The othello-js library cannot be imported via NPM or included as a CDN repositor
 ## API - othello.js (class Othello)
 
 ### Constructor - Othello()
-The constructor takes an optional config object that may contain a specification for the field: ```fen```, which indicates the position of the board. If no fen is passed, the game will be initialized with the default starting position. 
+The constructor takes an optional config object that may contain a specification for the field: ```fen```, which indicates the position of the board. If no FEN is passed, the game will be initialized with the default starting position. 
 
 This Othello "FEN" is an adaptation on chess's [Forsyth-Edwards Notation (FEN)](http://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation), which specifies the game's state in a concise manner. In othello-js, this is simplified to the following structure:
   1. 'b' represents a black piece
@@ -89,7 +89,10 @@ othello.fen() // returns => '8|8|8|3bw3|3wb3|8|8|8 b'
 ```
 
 ### .getHistory()
-Returns a list of all moves that have occurred during the game, along with the player who made them.
+Returns...
+- a list of all moves that have occurred during the game
+- the player who made each move
+- the FEN prior to each move being made
 
 ```javascript
 let othello = new Othello();
@@ -98,8 +101,15 @@ othello.move({'row': 2, 'col': 5});
 othello.getHistory();
 /* returns => 
 [
-  {'row': 2, 'col': 4, 'color': 'b'},
-  {'row': 2, 'col': 5, 'color': 'w'}
+  {
+    fen: "8|8|8|3bw3|3wb3|8|8|8 b",
+    turn: "b",
+    move: {row: 2, col: 4}
+  }, {
+    fen: "8|8|8|3bbb2|3wb3|8|8|8 w",
+    turn: "w",
+    move: {row: 2, col: 5}
+  }
 ]
 */
 ```
@@ -119,17 +129,54 @@ Resets the Othello game to its starting position and clears the history
 ```javascript
 let othello = new Othello();
 othello.move({'row': 2, 'col': 4});
-othello.fen(); // returns '8|8|4b3|3bb3|3wb3|8|8|8 w'
+othello.fen(); // returns => '8|8|4b3|3bb3|3wb3|8|8|8 w'
 othello.reset();
 othello.fen(); // returns => '8|8|8|3bw3|3wb3|8|8|8 b'
 othello.getHistory(); // returns => []
 ```
 
 ### .getScore(color)
-Returns the number of pieces a player has on the board. Valid arguments are ```'b'``` or ```'w'```.
+Returns the number of pieces a player has on the board. Valid arguments are `'b'` or `'w'`.
 
 ```javascript
 let othello = new Othello();
-othello.getScore('b'); // returns 2
-othello.getScore('w'); // returns 2
+othello.getScore('b'); // returns => 2
+othello.getScore('w'); // returns => 2
+```
+
+### .undo()
+Take back the last half-move, returning the latest entry from the game history. Also removes that move from the game history.
+
+```javascript
+let othello = new Othello();
+othello.move({'row': 2, 'col': 4});
+othello.undo();
+/*
+returns => 
+{
+  fen: "8|8|8|3bw3|3wb3|8|8|8 b",
+  turn: "b",
+  move: {row: 2, col: 4}
+}
+*/
+```
+
+### Othello.fenToBoard(fen)
+Static method that converts an Othello FEN to a board array.
+
+```javascript
+let fen = '8|8|4b3|3bb3|3wb3|8|8|8 w'
+Othello.fenToBoard(fen);
+/* returns =>
+[
+  ['e', 'e', 'e', 'e', 'e', 'e', 'e', 'e'],
+  ['e', 'e', 'e', 'e', 'e', 'e', 'e', 'e'],
+  ['e', 'e', 'e', 'e', 'b', 'e', 'e', 'e'],
+  ['e', 'e', 'e', 'b', 'b', 'e', 'e', 'e'],
+  ['e', 'e', 'e', 'w', 'b', 'e', 'e', 'e'],
+  ['e', 'e', 'e', 'e', 'e', 'e', 'e', 'e'],
+  ['e', 'e', 'e', 'e', 'e', 'e', 'e', 'e'],
+  ['e', 'e', 'e', 'e', 'e', 'e', 'e', 'e']
+]
+*/
 ```
